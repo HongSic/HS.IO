@@ -17,7 +17,17 @@ namespace HS.IO.Disk
         public override Stream Create(string Path) => new FileStream(Path, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
         public override Stream Append(string Path) => new FileStream(Path, FileMode.Append, FileAccess.ReadWrite, FileShare.Read);
 
-        public override void Delete(string Path) => File.Delete(Path);
+        public override void Delete(string Path, IOItemKind Kind = IOItemKind.None)
+        {
+            if(Kind == IOItemKind.None)
+            {
+                var kind = GetKind(Path);
+                if (kind == IOItemKind.File) File.Delete(Path);
+                else if (kind == IOItemKind.Directory) Directory.Delete(Path, true);
+            }
+            else if(Kind == IOItemKind.Directory) Directory.Delete(Path, true);
+            else File.Delete(Path);
+        }
         public override bool Exist(string Path) => File.Exists(Path) || Directory.Exists(Path);
         public override IOItemKind GetKind(string Path)
         {
@@ -36,6 +46,7 @@ namespace HS.IO.Disk
             else if(Type == ItemType.Directory) return new List<string>(Directory.GetDirectories(Path, Extension));
             else
             {
+                Extension = Extension == null ? "" : Extension;
                 var files = Directory.GetFiles(Path, Extension);
                 var dirs = Directory.GetDirectories(Path, Extension);
                 var all = new List<string>(files.Length + dirs.Length);

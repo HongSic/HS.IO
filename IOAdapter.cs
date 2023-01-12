@@ -32,8 +32,18 @@ namespace HS.IO
 
         public abstract IOItemInfo GetInfo(string Path);
         public virtual Task<IOItemInfo> GetInfoAsync(string Path) => Task.Run(() => GetInfo(Path));
-        public abstract void Delete(string Path);
-        public virtual Task DeleteAsync(string Path) => Task.Run(() => Delete(Path));
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Path"></param>
+        /// <param name="Kind">None is Auto</param>
+        public abstract void Delete(string Path, IOItemKind Kind = IOItemKind.None);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Path"></param>
+        /// <param name="Kind">None is Auto</param>
+        public virtual Task DeleteAsync(string Path, IOItemKind Kind = IOItemKind.None) => Task.Run(() => Delete(Path, Kind));
         public abstract bool Exist(string Path);
         public virtual Task<bool> ExistAsync(string Path) => Task.Run(() => Exist(Path));
         public abstract void CreateDirectory(string Path);
