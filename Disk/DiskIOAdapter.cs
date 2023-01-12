@@ -5,17 +5,26 @@ namespace HS.IO.Disk
 {
     public class DiskIOAdapter : IOAdapter
     {
+        public override char SeparatorChar => Path.DirectorySeparatorChar;
+        public override bool CanRead => true;
+        public override bool CanWrite => true;
+        public override bool CanAppend => true;
+
         public DiskIOAdapter() { }
 
-        public override void Create(string Path, bool IsDirectory)
-        {
-            if (IsDirectory) Directory.CreateDirectory(Path);
-            else File.Create(Path).Close();
-        }
+        public override void CreateDirectory(string Path) => Directory.CreateDirectory(Path);
+
+        public override Stream Create(string Path) => new FileStream(Path, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+        public override Stream Append(string Path) => new FileStream(Path, FileMode.Append, FileAccess.ReadWrite, FileShare.Read);
 
         public override void Delete(string Path) => File.Delete(Path);
         public override bool Exist(string Path) => File.Exists(Path) || Directory.Exists(Path);
-        public override IOItemKind GetKind(string Path) => Directory.Exists(Path) ? IOItemKind.Directory : IOItemKind.File;
+        public override IOItemKind GetKind(string Path)
+        {
+            if (Directory.Exists(Path)) return IOItemKind.Directory;
+            else if (File.Exists(Path)) return IOItemKind.File;
+            else return IOItemKind.None;
+        }
 
         public override IOItemInfo GetInfo(string Path) => new DiskIOItemInfo(Path);
 
