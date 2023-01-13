@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace HS.IO.Disk
@@ -39,6 +40,17 @@ namespace HS.IO.Disk
         public override IOItemInfo GetInfo(string Path) => new DiskIOItemInfo(Path);
 
         public override Stream Open(string Path) => new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        public override void SetTimestamp(string Path, DateTime Timestamp, IOItemKind Kind = IOItemKind.None)
+        {
+            if (Kind == IOItemKind.None)
+            {
+                var kind = GetKind(Path);
+                if (kind == IOItemKind.File) File.SetLastWriteTime(Path, Timestamp);
+                else if (kind == IOItemKind.Directory) Directory.SetLastWriteTime(Path, Timestamp);
+            }
+            else if (Kind == IOItemKind.Directory) Directory.SetLastWriteTime(Path, Timestamp);
+            else File.SetLastWriteTime(Path, Timestamp);
+        }
 
         public override List<string> GetItems(string Path, ItemType Type, string Extension = null)
         {

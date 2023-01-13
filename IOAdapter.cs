@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -54,6 +55,8 @@ namespace HS.IO
         public virtual Task<Stream> AppendAsync(string Path, bool IsDirectory) => Task.Run(() => Append(Path));
         public abstract Stream Open(string Path);
         public virtual Task<Stream> OpenAsync(string Path) => Task.Run(() => Open(Path));
+        public abstract void SetTimestamp(string Path, DateTime Timestamp, IOItemKind Kind = IOItemKind.None);
+        public virtual Task SetTimestampAsync(string Path, DateTime Timestamp, IOItemKind Kind = IOItemKind.None) => Task.Run(() => SetTimestamp(Path, Timestamp, Kind));
 
         public enum ItemType
         {
