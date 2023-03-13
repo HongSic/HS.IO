@@ -55,6 +55,10 @@ namespace HS.IO
         public virtual Task<Stream> AppendAsync(string Path, bool IsDirectory) => Task.Run(() => Append(Path));
         public abstract Stream Open(string Path);
         public virtual Task<Stream> OpenAsync(string Path) => Task.Run(() => Open(Path));
+        public abstract void Write(string Path, Stream Data);
+        public virtual Task WriteAsync(string Path, Stream Data) => Task.Run(() => Write(Path, Data));
+        public abstract void Move(string OriginalPath, string DestinationPath);
+        public virtual Task MoveAsync(string OriginalPath, string DestinationPath) => Task.Run(() => Move(OriginalPath, DestinationPath));
         public abstract void SetTimestamp(string Path, DateTime Timestamp, IOItemKind Kind = IOItemKind.None);
         public virtual Task SetTimestampAsync(string Path, DateTime Timestamp, IOItemKind Kind = IOItemKind.None) => Task.Run(() => SetTimestamp(Path, Timestamp, Kind));
 

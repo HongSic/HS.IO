@@ -9,6 +9,7 @@ namespace HS.IO
 
         public virtual string Path { get; }
         public virtual string Name => System.IO.Path.GetFileName(Path);
+        public virtual string Type => System.IO.Path.GetFileName(Path).Replace(".", "");
 
         public abstract IOItemKind Kind { get; }
         public abstract long Length { get; }

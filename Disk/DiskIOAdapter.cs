@@ -40,6 +40,18 @@ namespace HS.IO.Disk
         public override IOItemInfo GetInfo(string Path) => new DiskIOItemInfo(Path);
 
         public override Stream Open(string Path) => new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+        public override void Write(string Path, Stream Data)
+        {
+
+        }
+
+        public override void Move(string OriginalPath, string DestinationPath)
+        {
+            if(File.Exists(OriginalPath)) File.Move(OriginalPath, DestinationPath);
+            else if(Directory.Exists(OriginalPath)) Directory.Move(OriginalPath, DestinationPath);
+        }
+
         public override void SetTimestamp(string Path, DateTime Timestamp, IOItemKind Kind = IOItemKind.None)
         {
             if (Kind == IOItemKind.None)
