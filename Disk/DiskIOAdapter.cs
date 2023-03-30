@@ -10,23 +10,23 @@ namespace HS.IO.Disk
         public override bool CanRead => true;
         public override bool CanWrite => true;
         public override bool CanAppend => true;
+        public override bool CanChangeTimsstamp => true;
 
         public DiskIOAdapter() { }
 
         public override void CreateDirectory(string Path) => Directory.CreateDirectory(Path);
 
-        public override Stream Create(string Path) => new FileStream(Path, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
-        public override Stream Append(string Path) => new FileStream(Path, FileMode.Append, FileAccess.ReadWrite, FileShare.Read);
-
-        public override void Delete(string Path, IOItemKind Kind = IOItemKind.None)
+        public override void Create(string Path) => File.Create(Path);
+        public override void Append(string Path, Stream Data)
         {
-            if(Kind == IOItemKind.None)
-            {
-                var kind = GetKind(Path);
-                if (kind == IOItemKind.File) File.Delete(Path);
-                else if (kind == IOItemKind.Directory) Directory.Delete(Path, true);
-            }
-            else if(Kind == IOItemKind.Directory) Directory.Delete(Path, true);
+            using (var stream = new FileStream(Path, FileMode.Append, FileAccess.ReadWrite, FileShare.Read))
+                stream.CopyTo(Data);
+        }
+
+        public override void Delete(string Path)
+        {
+            var kind = GetKind(Path);
+            if (kind == IOItemKind.Directory) Directory.Delete(Path, true);
             else File.Delete(Path);
         }
         public override bool Exist(string Path) => File.Exists(Path) || Directory.Exists(Path);
@@ -40,11 +40,6 @@ namespace HS.IO.Disk
         public override IOItemInfo GetInfo(string Path) => new DiskIOItemInfo(Path);
 
         public override Stream Open(string Path) => new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-        public override void Write(string Path, Stream Data)
-        {
-
-        }
 
         public override void Move(string OriginalPath, string DestinationPath)
         {
@@ -79,5 +74,7 @@ namespace HS.IO.Disk
                 return all;
             }
         }
+
+        public override void Dispose() { }
     }
 }
