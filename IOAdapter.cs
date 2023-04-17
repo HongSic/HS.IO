@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HS.IO
@@ -30,10 +31,10 @@ namespace HS.IO
         /// <param name="Type"></param>
         /// <param name="Extension">.foo</param>
         /// <returns></returns>
-        public virtual Task<List<string>> GetItemsAsync(string Path, ItemType Type, string Extension = null) => Task.Run(() => GetItems(Path, Type, Extension));
+        public virtual Task<List<string>> GetItemsAsync(string Path, ItemType Type, string Extension = null, CancellationToken cancellationToken = default) => Task.Run(() => GetItems(Path, Type, Extension), cancellationToken);
 
         public abstract IOItemInfo GetInfo(string Path);
-        public virtual Task<IOItemInfo> GetInfoAsync(string Path) => Task.Run(() => GetInfo(Path));
+        public virtual Task<IOItemInfo> GetInfoAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => GetInfo(Path), cancellationToken);
         /// <summary>
         /// 
         /// </summary>
@@ -43,25 +44,25 @@ namespace HS.IO
         /// 
         /// </summary>
         /// <param name="Path"></param>
-        public virtual Task DeleteAsync(string Path) => Task.Run(() => Delete(Path));
+        public virtual Task DeleteAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => Delete(Path), cancellationToken);
         public abstract bool Exist(string Path);
-        public virtual Task<bool> ExistAsync(string Path) => Task.Run(() => Exist(Path));
+        public virtual Task<bool> ExistAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => Exist(Path), cancellationToken);
         public abstract void CreateDirectory(string Path);
-        public virtual Task CreateDirectoryAsync(string Path) => Task.Run(() => CreateDirectory(Path));
+        public virtual Task CreateDirectoryAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => CreateDirectory(Path), cancellationToken);
         public abstract void Create(string Path);
-        public virtual Task CreateAsync(string Path) => Task.Run(() => Create(Path));
+        public virtual Task CreateAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => Create(Path), cancellationToken);
         public abstract void Append(string Path, Stream Data);
-        public virtual Task AppendAsync(string Path, Stream Data) => Task.Run(() => Append(Path, Data));
+        public virtual Task AppendAsync(string Path, Stream Data, CancellationToken cancellationToken = default) => Task.Run(() => Append(Path, Data), cancellationToken);
         public abstract Stream Open(string Path);
-        public virtual Task<Stream> OpenAsync(string Path) => Task.Run(() => Open(Path));
+        public virtual Task<Stream> OpenAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => Open(Path), cancellationToken);
         public virtual void Write(string Path, Stream Data) => Data.CopyTo(Open(Path));
-        public virtual Task WriteAsync(string Path, Stream Data) => Task.Run(() => Write(Path, Data));
+        public virtual Task WriteAsync(string Path, Stream Data, CancellationToken cancellationToken = default) => Task.Run(() => Write(Path, Data), cancellationToken);
         public virtual void Move(string OriginalPath, string DestinationPath) { Copy(OriginalPath, DestinationPath); Delete(OriginalPath); }
-        public virtual async Task MoveAsync(string OriginalPath, string DestinationPath) { await CopyAsync(OriginalPath, DestinationPath); await DeleteAsync(OriginalPath); }
+        public virtual async Task MoveAsync(string OriginalPath, string DestinationPath, CancellationToken cancellationToken = default) { await CopyAsync(OriginalPath, DestinationPath, cancellationToken); await DeleteAsync(OriginalPath, cancellationToken); }
         public virtual void Copy(string OriginalPath, string DestinationPath) => Copy(this, OriginalPath, this, DestinationPath);
-        public virtual Task CopyAsync(string OriginalPath, string DestinationPath) => CopyAsync(this, OriginalPath, this, DestinationPath);
+        public virtual Task CopyAsync(string OriginalPath, string DestinationPath, CancellationToken cancellationToken = default) => CopyAsync(this, OriginalPath, this, DestinationPath);
         public abstract void SetTimestamp(string Path, DateTime Timestamp, IOItemKind Kind = IOItemKind.None);
-        public virtual Task SetTimestampAsync(string Path, DateTime Timestamp, IOItemKind Kind = IOItemKind.None) => Task.Run(() => SetTimestamp(Path, Timestamp, Kind));
+        public virtual Task SetTimestampAsync(string Path, DateTime Timestamp, IOItemKind Kind = IOItemKind.None, CancellationToken cancellationToken = default) => Task.Run(() => SetTimestamp(Path, Timestamp, Kind), cancellationToken);
 
         public abstract void Dispose();
 
