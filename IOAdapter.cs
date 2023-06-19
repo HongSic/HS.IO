@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HS.Utils.Text;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -15,6 +16,8 @@ namespace HS.IO
         public abstract bool CanChangeTimsstamp { get; }
 
         public virtual IOItemKind GetKind(string Path) => GetInfo(Path).Kind;
+
+        public virtual IOPath MergePath(string OriginalPath, string DestinationPath = null, IOPathKind Kind = IOPathKind.Absolute) => new IOPath(StringUtils.PathMaker(OriginalPath, DestinationPath, SeparatorChar), Kind);
 
         /// <summary>
         /// 
