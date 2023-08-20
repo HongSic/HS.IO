@@ -38,6 +38,16 @@ namespace HS.IO
 
         public abstract IOItemInfo GetInfo(string Path);
         public virtual Task<IOItemInfo> GetInfoAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => GetInfo(Path), cancellationToken);
+        #region
+        public abstract bool ExistDirectory(string Path);
+        public virtual Task<bool> ExistDirectoryAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => Exist(Path), cancellationToken);
+        public abstract void CreateDirectory(string Path);
+        public virtual Task CreateDirectoryAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => CreateDirectory(Path), cancellationToken);
+        public abstract void DeleteDirectory(string Path);
+        public virtual Task DeleteDirectoryAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => CreateDirectory(Path), cancellationToken);
+        public abstract void Create(string Path);
+        public virtual Task CreateAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => Create(Path), cancellationToken);
+        #endregion
         /// <summary>
         /// 
         /// </summary>
@@ -50,10 +60,6 @@ namespace HS.IO
         public virtual Task DeleteAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => Delete(Path), cancellationToken);
         public abstract bool Exist(string Path);
         public virtual Task<bool> ExistAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => Exist(Path), cancellationToken);
-        public abstract void CreateDirectory(string Path);
-        public virtual Task CreateDirectoryAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => CreateDirectory(Path), cancellationToken);
-        public abstract void Create(string Path);
-        public virtual Task CreateAsync(string Path, CancellationToken cancellationToken = default) => Task.Run(() => Create(Path), cancellationToken);
         public abstract void Append(string Path, Stream Data);
         public virtual Task AppendAsync(string Path, Stream Data, CancellationToken cancellationToken = default) => Task.Run(() => Append(Path, Data), cancellationToken);
         public abstract Stream Open(string Path);

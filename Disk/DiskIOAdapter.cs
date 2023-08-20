@@ -14,7 +14,9 @@ namespace HS.IO.Disk
 
         public DiskIOAdapter() { }
 
+        public override bool ExistDirectory(string Path) => Directory.Exists(Path);
         public override void CreateDirectory(string Path) => Directory.CreateDirectory(Path);
+        public override void DeleteDirectory(string Path) => Directory.Delete(Path);
 
         public override void Create(string Path) => File.Create(Path);
         public override void Append(string Path, Stream Data)
@@ -29,7 +31,7 @@ namespace HS.IO.Disk
             if (kind == IOItemKind.Directory) Directory.Delete(Path, true);
             else File.Delete(Path);
         }
-        public override bool Exist(string Path) => File.Exists(Path) || Directory.Exists(Path);
+        public override bool Exist(string Path) => File.Exists(Path);
         public override IOItemKind GetKind(string Path)
         {
             if (Directory.Exists(Path)) return IOItemKind.Directory;
@@ -65,7 +67,7 @@ namespace HS.IO.Disk
             else if(Type == ItemType.Directory) return new List<string>(Directory.GetDirectories(Path, Extension));
             else
             {
-                Extension = Extension == null ? "" : Extension;
+                Extension = Extension ?? "";
                 var files = Directory.GetFiles(Path, Extension);
                 var dirs = Directory.GetDirectories(Path, Extension);
                 var all = new List<string>(files.Length + dirs.Length);
