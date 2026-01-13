@@ -31,7 +31,7 @@ namespace HS.IO.Disk
 
         public override long Length => _Length;
 
-        public override DateTime ModifyTime => _ModifyTime;
-        public override DateTime CreateTime => _CreateTime;
+        public override DateTime? ModifyTime => _ModifyTime;
+        public override DateTime? CreateTime => _CreateTime;
     }
 }

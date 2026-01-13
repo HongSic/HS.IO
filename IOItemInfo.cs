@@ -13,7 +13,7 @@ namespace HS.IO
 
         public abstract IOItemKind Kind { get; }
         public abstract long Length { get; }
-        public abstract DateTime ModifyTime { get; }
-        public abstract DateTime CreateTime { get; }
+        public abstract DateTime? ModifyTime { get; }
+        public abstract DateTime? CreateTime { get; }
     }
 }
