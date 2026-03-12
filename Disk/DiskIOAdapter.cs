@@ -14,6 +14,16 @@ namespace HS.IO.Disk
 
         public DiskIOAdapter() { }
 
+        public override IOItemKind GetKind(string Path)
+        {
+            if (Directory.Exists(Path)) return IOItemKind.Directory;
+            else if (File.Exists(Path)) return IOItemKind.File;
+            else return IOItemKind.None;
+        }
+        public override long GetSize(string Path) => new FileInfo(Path).Length;
+        public override DateTime? GetModifyTime(string Path) => new FileInfo(Path).LastWriteTime;
+        public override DateTime? GetCreateTime(string Path) => new FileInfo(Path).CreationTime;
+
         public override bool ExistDirectory(string Path) => Directory.Exists(Path);
         public override void CreateDirectory(string Path) => Directory.CreateDirectory(Path);
         public override void DeleteDirectory(string Path) => Directory.Delete(Path);
@@ -32,16 +42,12 @@ namespace HS.IO.Disk
             else File.Delete(Path);
         }
         public override bool Exist(string Path) => File.Exists(Path);
-        public override IOItemKind GetKind(string Path)
-        {
-            if (Directory.Exists(Path)) return IOItemKind.Directory;
-            else if (File.Exists(Path)) return IOItemKind.File;
-            else return IOItemKind.None;
-        }
 
         public override IOItemInfo GetInfo(string Path) => new DiskIOItemInfo(Path);
 
-        public override Stream Open(string Path) => new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        public override Stream Open(string Path) => new FileStream(Path, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+        public override Stream OpenRead(string Path) => new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        public override Stream OpenWrite(string Path) => new FileStream(Path, FileMode.Open, FileAccess.Write, FileShare.Read);
 
         public override void Move(string OriginalPath, string DestinationPath)
         {

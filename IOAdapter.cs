@@ -22,6 +22,9 @@ namespace HS.IO
 
         /// <summary>경로의 항목 종류를 반환합니다.</summary>
         public virtual IOItemKind GetKind(string Path) => GetInfo(Path).Kind;
+        public virtual long GetSize(string Path) => GetInfo(Path).Length;
+        public virtual DateTime? GetModifyTime(string Path) => GetInfo(Path).ModifyTime;
+        public virtual DateTime? GetCreateTime(string Path) => GetInfo(Path).CreateTime;
 
         /// <summary>경로를 병합하여 IOPath를 생성합니다.</summary>
         public virtual IOPath MergePath(string OriginalPath, string DestinationPath = null, IOPathKind Kind = IOPathKind.Absolute) => new IOPath(StringUtils.PathMaker(OriginalPath, DestinationPath, SeparatorChar), Kind);
@@ -91,16 +94,36 @@ namespace HS.IO
         /// <summary>파일 또는 디렉터리 존재 여부를 비동기로 확인합니다.</summary>
         public virtual Task<bool> ExistAsync(string Path, CancellationToken cancellationToken) => Task.Run(() => Exist(Path), cancellationToken);
         public Task<bool> ExistAsync(string Path) => ExistAsync(Path, CancellationToken.None);
+
+        #region Append
         /// <summary>지정 경로 끝에 데이터를 추가합니다.</summary>
         public abstract void Append(string Path, Stream Data);
         /// <summary>데이터를 비동기로 추가합니다.</summary>
         public virtual Task AppendAsync(string Path, Stream Data, CancellationToken cancellationToken) => Task.Run(() => Append(Path, Data), cancellationToken);
         public Task AppendAsync(string Path, Stream Data) => AppendAsync(Path, Data, CancellationToken.None);
-        /// <summary>스트림으로 파일을 엽니다.</summary>
+        #endregion
+
+        #region Open
+        /// <summary>스트림으로 파일을 엽니다. (읽기/쓰기)</summary>
         public abstract Stream Open(string Path);
-        /// <summary>파일을 비동기로 엽니다.</summary>
+        /// <summary>스트림으로 파일을 엽니다. (읽기 전용)</summary>
+        public abstract Stream OpenRead(string Path);
+        /// <summary>파일을 비동기로 엽니다. (쓰기 전용)</summary>
+        public abstract Stream OpenWrite(string Path);
+
+        /// <summary>파일을 비동기로 엽니다. (읽기/쓰기)</summary>
         public virtual Task<Stream> OpenAsync(string Path, CancellationToken cancellationToken) => Task.Run(() => Open(Path), cancellationToken);
-        public Task<Stream> OpenAsync(string Path) => OpenAsync(Path, CancellationToken.None);
+        public virtual Task<Stream> OpenAsync(string Path) => OpenAsync(Path, CancellationToken.None);
+
+        /// <summary>파일을 비동기로 엽니다. (읽기 전용)</summary>
+        public virtual Task<Stream> OpenReadAsync(string Path, CancellationToken cancellationToken) => Task.Run(() => OpenRead(Path), cancellationToken);
+        public virtual Task<Stream> OpenReadAsync(string Path) => OpenAsync(Path, CancellationToken.None);
+
+        /// <summary>파일을 비동기로 엽니다. (쓰기 전용)</summary>
+        public virtual Task<Stream> OpenWriteAsync(string Path, CancellationToken cancellationToken) => Task.Run(() => OpenWrite(Path), cancellationToken);
+        public virtual Task<Stream> OpenWriteAsync(string Path) => OpenWriteAsync(Path, CancellationToken.None);
+        #endregion
+
         /// <summary>스트림을 지정된 경로에 기록합니다.</summary>
         public virtual void Write(string Path, Stream Data) => Data.CopyTo(Open(Path));
         /// <summary>스트림을 비동기로 기록합니다.</summary>
@@ -126,6 +149,7 @@ namespace HS.IO
             }
         }
         public Task CopyAsync(string OriginalPath, string DestinationPath) => CopyAsync(OriginalPath, DestinationPath, CancellationToken.None);
+
         /// <summary>파일 또는 디렉터리 타임스탬프를 설정합니다.</summary>
         public abstract void SetTimestamp(string Path, DateTime Timestamp, IOItemKind Kind = IOItemKind.None);
         /// <summary>타임스탬프를 비동기로 설정합니다.</summary>
